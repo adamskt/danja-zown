@@ -163,3 +163,10 @@ Set-Alias spv Show-PathVariable
 function killbld {
     taskkill /IM msbuild.exe /F
 }
+
+function Follow-Shortcut([string] $name) {
+    $sh = New-Object -COM WScript.Shell
+    cd $sh.CreateShortcut($("{0}\Links\{1}.lnk" -f $env:USERPROFILE, $name)).TargetPath
+}
+
+Set-Alias goto Follow-Shortcut
