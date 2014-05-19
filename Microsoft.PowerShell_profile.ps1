@@ -151,6 +151,18 @@ function Get-DriveFreespace {
 
 Set-Alias df Get-DriveFreespace
 
+# Stolen from https://github.com/scottmuc/poshfiles/blob/master/Microsoft.PowerShell_profile.ps1
+# inline functions, aliases and variables
+function which($name) { Get-Command $name | Select-Object Definition }
+function touch($file) { "" | Out-File $file -Encoding ASCII }
+
+# Preserve history across sessions
+
+Register-EngineEvent PowerShell.Exiting {
+    Get-History -Count 32767 | Group CommandLine | Foreach {$_.Group[0]} | Export-CliXml (Join-Path -Path $env:userprofile -ChildPath "Documents\pshist.xml")
+} -SupportEvent
+
+Import-CliXml (Join-Path -Path $env:userprofile -ChildPath "Documents\pshist.xml") | Add-History
 
 # Pretty PATH variable
 function Show-PathVariable {
