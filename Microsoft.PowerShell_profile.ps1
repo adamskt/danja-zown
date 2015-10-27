@@ -139,6 +139,12 @@ function Follow-Shortcut([string] $name) {
 
 Set-Alias goto Follow-Shortcut
 
+function Exterminate {
+    [CmdletBinding(SupportsShouldProcess = $True)]
+    Param($path = ".")
+    Get-ChildItem -Path $path -Include bin,obj -Recurse | Remove-Item -Recurse -Force
+}
+
 function Invoke-WMSettingsChange() {
     if (-not ("win32.nativemethods" -as [type])) {
         # import sendmessagetimeout from win32
