@@ -72,56 +72,12 @@ New-CommandWrapper Out-Default -Process {
   Write-Host
 }
 
-function Get-DirSize
-{
-  param ($dir)
-  $bytes = 0
-  $count = 0
+# Using https://github.com/joonro/Get-ChildItem-Color
+$ScriptPath = Split-Path -parent $PSCommandPath
+. "$ScriptPath\Get-ChildItem-Color\Get-ChildItem-Color.ps1"
 
-  Get-Childitem $dir | Foreach-Object {
-    if ($_ -is [System.IO.FileInfo])
-    {
-      $bytes += $_.Length
-      $count++
-    }
-  }
-
-  Write-Host "`n    " -NoNewline
-
-  if ($bytes -ge 1KB -and $bytes -lt 1MB)
-  {
-    Write-Host ("" + [Math]::Round(($bytes / 1KB), 2) + " KB") -ForegroundColor "White" -NoNewLine
-  }
-  elseif ($bytes -ge 1MB -and $bytes -lt 1GB)
-  {
-    Write-Host ("" + [Math]::Round(($bytes / 1MB), 2) + " MB") -ForegroundColor "White" -NoNewLine
-  }
-  elseif ($bytes -ge 1GB)
-  {
-    Write-Host ("" + [Math]::Round(($bytes / 1GB), 2) + " GB") -ForegroundColor "White" -NoNewLine
-  }
-  else
-  {
-    Write-Host ("" + $bytes + " bytes") -ForegroundColor "White" -NoNewLine
-  }
-  Write-Host " in " -NoNewline
-  Write-Host $count -ForegroundColor "White" -NoNewline
-  Write-Host " files"
-
-}
-
-function Get-DirWithSize
-{
-  param ($dir)
-  Get-Childitem $dir
-  Get-DirSize $dir
-}
-
-Remove-Item alias:dir
-Remove-Item alias:ls
-Set-Alias dir Get-DirWithSize
-Set-Alias ls Get-DirWithSize
-
+Set-Alias -Name ls -Value Get-ChildItem-Format-Wide -Option AllScope
+Set-Alias -Name ll -Value Get-ChildItem-Color -Option AllScope
 
 
 # FROM: https://github.com/tomasr/dotfiles/blob/master/.profile.ps1
