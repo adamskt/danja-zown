@@ -15,6 +15,16 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise
 function which($name) { Get-Command $name | Select-Object Definition }
 function touch($file) { "" | Out-File $file -Encoding ASCII }
 
+# FROM: https://github.com/tomasr/dotfiles/blob/master/.profile.ps1
+#
+# Set the $HOME variable for our use
+# and make powershell recognize ~\ as $HOME
+# in paths
+#
+set-variable -name HOME -value (resolve-path $env:USERPROFILE) -force
+(get-psprovider FileSystem).Home = $HOME
+Set-Location $HOME
+
 # get the syntax of a cmdlet, even if we have no help for it
 function Get-Syntax([string] $cmdlet) {
    get-command $cmdlet -syntax
@@ -33,9 +43,9 @@ Set-Alias df Get-DriveFreespace
 
 # Preserve history across sessions
 Register-EngineEvent PowerShell.Exiting {
-    Get-History | Export-CliXml (Join-Path -Path "D:\Kelly\Documents" -ChildPath "pshist.xml")
+    Get-History | Export-CliXml (Join-Path -Path $env:userprofile -ChildPath "Documents\pshist.xml")
 } -SupportEvent
-Import-CliXml (Join-Path -Path "D:\Kelly\Documents" -ChildPath "pshist.xml") | Add-History
+Import-CliXml (Join-Path -Path $env:userprofile -ChildPath "Documents\pshist.xml") | Add-History
 
 # Pretty PATH variable
 function Show-PathVariable {
