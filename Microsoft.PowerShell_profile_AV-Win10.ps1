@@ -1,5 +1,3 @@
-#Set-Alias git 'C:\Program Files\Git\bin\git.exe'
-
 Import-Module PSReadline
 
 Set-PSReadlineOption -EditMode Vi -HistoryNoDuplicates
@@ -14,55 +12,56 @@ Set-PSReadlineKeyHandler -Key Ctrl+Tab -Function PossibleCompletions
 # is inserted to the command line without invoking. Multiple command selection
 # is supported, e.g. selected by Ctrl + Click.
 Set-PSReadlineKeyHandler -Key F7 `
-    -BriefDescription History `
-    -LongDescription 'Show command history' `
-    -ScriptBlock {
-    $pattern = $null
-    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$pattern, [ref]$null)
-    if ($pattern) {
-        $pattern = [regex]::Escape($pattern)
-    }
+  -BriefDescription History `
+  -LongDescription 'Show command history' `
+  -ScriptBlock {
+  $pattern = $null
+  [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$pattern, [ref]$null)
+  if ($pattern) {
+    $pattern = [regex]::Escape($pattern)
+  }
 
-    $history = [System.Collections.ArrayList]@(
-        $last = ''
-        $lines = ''
-        foreach ($line in [System.IO.File]::ReadLines((Get-PSReadlineOption).HistorySavePath)) {
-            if ($line.EndsWith('`')) {
-                $line = $line.Substring(0, $line.Length - 1)
-                $lines = if ($lines) {
-                    "$lines`n$line"
-                } else {
-                    $line
-                }
-                continue
-            }
-
-            if ($lines) {
-                $line = "$lines`n$line"
-                $lines = ''
-            }
-
-            if (($line -cne $last) -and (!$pattern -or ($line -match $pattern))) {
-                $last = $line
-                $line
-            }
+  $history = [System.Collections.ArrayList]@(
+    $last = ''
+    $lines = ''
+    foreach ($line in [System.IO.File]::ReadLines((Get-PSReadlineOption).HistorySavePath)) {
+      if ($line.EndsWith('`')) {
+        $line = $line.Substring(0, $line.Length - 1)
+        $lines = if ($lines) {
+          "$lines`n$line"
+        } else {
+          $line
         }
-    )
-    $history.Reverse()
+        continue
+      }
 
-    $command = $history | Out-GridView -Title History -PassThru
-    if ($command) {
-        [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-        [Microsoft.PowerShell.PSConsoleReadLine]::Insert(($command -join "`n"))
+      if ($lines) {
+        $line = "$lines`n$line"
+        $lines = ''
+      }
+
+      if (($line -cne $last) -and (!$pattern -or ($line -match $pattern))) {
+        $last = $line
+        $line
+      }
     }
-}
+  )
+  $history.Reverse()
 
+  $command = $history | Out-GridView -Title History -PassThru
+  if ($command) {
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert(($command -join "`n"))
+  }
+}
 
 # If module is installed in a default location ($env:PSModulePath),
 # use this instead (see about_Modules for more information):
 Import-Module posh-git
 
 Import-Module PSColor
+
+Import-Module pscx
 
 Pop-Location
 
@@ -73,27 +72,31 @@ Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise
 function which($name) { Get-Command $name | Select-Object Definition }
 function touch($file) { "" | Out-File $file -Encoding ASCII }
 
+# FROM: https://github.com/tomasr/dotfiles/blob/master/.profile.ps1
+#
+# Set the $HOME variable for our use
+# and make powershell recognize ~\ as $HOME
+# in paths
+#
+set-variable -name HOME -value (resolve-path $env:USERPROFILE) -force
+(get-psprovider FileSystem).Home = $HOME
+Set-Location $HOME
+
 # get the syntax of a cmdlet, even if we have no help for it
 function Get-Syntax([string] $cmdlet) {
-    get-command $cmdlet -syntax
+  get-command $cmdlet -syntax
 }
 function Get-DriveFreespace {
-    Get-wmiObject -class "Win32_LogicalDisk" -namespace "root\CIMV2" -computername localhost `
-        | Select-Object  DeviceID, `
-        VolumeName, `
-        Description, `
-        FileSystem, `
-    @{Name = "SizeGB"; Expression = {($_.Size / 1GB).ToString("f3")}}, `
-    @{Name = "FreeGB"; Expression = {($_.FreeSpace / 1GB).ToString("f3")}} `
-        | Format-Table -AutoSize
+  Get-wmiObject -class "Win32_LogicalDisk" -namespace "root\CIMV2" -computername localhost `
+    | Select  DeviceID, `
+    VolumeName, `
+    Description, `
+    FileSystem, `
+  @{Name = "SizeGB"; Expression = {($_.Size / 1GB).ToString("f3")}}, `
+  @{Name = "FreeGB"; Expression = {($_.FreeSpace / 1GB).ToString("f3")}} `
+    | Format-Table -AutoSize
 }
 Set-Alias df Get-DriveFreespace
-
-# # Preserve history across sessions
-# Register-EngineEvent PowerShell.Exiting {
-#     Get-History | Export-CliXml (Join-Path -Path $env:userprofile -ChildPath "Documents\pshist.xml")
-# } -SupportEvent
-# Import-CliXml (Join-Path -Path $env:userprofile -ChildPath "Documents\pshist.xml") | Add-History
 
 # Pretty PATH variable
 function Show-PathVariable {
@@ -134,20 +137,17 @@ public static extern IntPtr SendMessageTimeout(
         [uintptr]::Zero, "Environment", 2, 5000, [ref]$result);
 }
 
-
-# $global:CurrentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-# if ($(New-Object Security.Principal.WindowsPrincipal( $global:CurrentUser )).IsInRole( [Security.Principal.WindowsBuiltInRole]::Administrator )) {
-#     $host.ui.rawui.WindowTitle = "* ADMINISTRATOR * " + $global:CurrentUser.Name + " @ " + [System.Net.Dns]::GetHostName() + " v" + $Host.Version + " - " + $env:PROCESSOR_ARCHITECTURE
-# } else {
-#     $host.ui.rawui.WindowTitle = $global:CurrentUser.Name + " @ " + [System.Net.Dns]::GetHostName() + " v" + $Host.Version + " - " + $env:PROCESSOR_ARCHITECTURE
-# }
-
 # Chocolatey profile
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
     Import-Module "$ChocolateyProfile"
 }
 
-# BECAUSE FRIGGIN AVISTA!
-$webclient = New-Object System.Net.WebClient
-$webclient.Proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
+function ll {
+  Get-ChildItem -Force @args
+}
+
+$env:BOS_DATABASE_SERVER="bunty,1401"
+$env:BOS_DATABASE_USERNAME="sa"
+$env:BOS_DATABASE_PASSWORD="Strong!P@ssword"
+$env:BOS_DATABASE_NAME="bosdb-local"
