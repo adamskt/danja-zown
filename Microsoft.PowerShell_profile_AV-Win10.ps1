@@ -146,8 +146,3 @@ if (Test-Path($ChocolateyProfile)) {
 function ll {
   Get-ChildItem -Force @args
 }
-
-$env:BOS_DATABASE_SERVER="bunty,1401"
-$env:BOS_DATABASE_USERNAME="sa"
-$env:BOS_DATABASE_PASSWORD="Strong!P@ssword"
-$env:BOS_DATABASE_NAME="bosdb-local"
