@@ -1,0 +1,38 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+
+    "terminal.integrated.fontFamily": "FuraMono Nerd Font Mono",
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
+
+    "window.openFilesInNewWindow": "off",
+
+    "sync.gist": "eea46d58ec58177b31bcb875504d94e3",
+    "sync.lastUpload": "2018-05-14T18:22:57.321Z",
+    "sync.autoDownload": true,
+    "sync.autoUpload": true,
+    "sync.lastDownload": "2018-04-27T16:02:33.173Z",
+    "sync.quietSync": true,
+    "powershell.codeFormatting.newLineAfterCloseBrace": false,
+    "powershell.integratedConsole.showOnStartup": false,
+    "workbench.iconTheme": "vscode-icons",
+    "window.zoomLevel": 0,
+    "sync.forceDownload": false,
+    "sync.host": "",
+    "sync.pathPrefix": "",
+    "editor.renderIndentGuides": false,
+    "sync.askGistName": false,
+    "vim.useCtrlKeys": false,
+    "git.defaultCloneDirectory": "C:\\Dev\\GitHub",
+    "git.confirmSync": false,
+    "editor.tabSize": 2,
+    "vim.useSystemClipboard": true,
+    "vim.visualstar": true,
+    "restructuredtext.linter.executablePath": "C:\\Python27\\Scripts\\restructuredtext-lint.exe",
+    "powershell.powerShellExePath": "C:\\Program Files\\PowerShell\\6.0.2\\pwsh.exe",
+    "git.autofetch": true,
+    "team.showWelcomeMessage": false,
+    "sync.removeExtensions": true,
+    "sync.syncExtensions": true
+}
