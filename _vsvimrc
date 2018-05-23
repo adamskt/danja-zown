@@ -1,0 +1,8 @@
+set vsvim_useeditordefaults
+set vsvim_useeditorindent
+set ic
+set hlsearch
+set cursorline
+set novisualbell
+set number
+nnoremap <esc> :nohl<CR><esc>
