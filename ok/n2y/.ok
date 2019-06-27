@@ -1,0 +1,6 @@
+tf scorch /exclude:.vs,.ok,*.vspscc # prompts to delete everything in local workspace not under source control in TFS
+pushd .\tools\PowerShell\;./start_iisexpress.ps1;popd # Starts the site, but from the root
+tf get; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
+msbuild /m /v:m ./n2y.all.sln /t:rebuild  # Rebuilds everything, using multithreading
+msbuild /m /v:m ./n2y.all.sln /t:build  # Builds everything, using multithreading
+pushd .\tools\PowerShell\;./_build_typescript.ps1;popd # Builds ALL the TypeScript
