@@ -9,9 +9,9 @@ Import-Module PSColor
 $global:PSColor.File.Hidden.Color = 'Gray'
 
 # Borrowed from https://gist.github.com/jtucker/6886367fb58d5404032507576b43433f
-$installPath = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version 16.0 -prerelease -property installationpath
+$installPath = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version 16.0 -property installationpath
 Import-Module (Join-Path $installPath "Common7\Tools\vsdevshell\Microsoft.VisualStudio.DevShell.dll")
-Enter-VsDevShell -VsInstallPath $installPath
+Enter-VsDevShell -VsInstallPath $installPath -SkipAutomaticLocation
 
 # Stolen from https://github.com/scottmuc/poshfiles/blob/master/Microsoft.PowerShell_profile.ps1
 # inline functions, aliases and variables
@@ -25,7 +25,7 @@ function Get-Syntax([string] $cmdlet) {
 }
 function Get-DriveFreespace {
     Get-wmiObject -class "Win32_LogicalDisk" -namespace "root\CIMV2" -computername localhost `
-        | Select  DeviceID, `
+        | Select-Object  DeviceID, `
                   VolumeName, `
                   Description, `
                   FileSystem, `
@@ -35,11 +35,6 @@ function Get-DriveFreespace {
 }
 Set-Alias df Get-DriveFreespace
 
-# # Preserve history across sessions
-# Register-EngineEvent PowerShell.Exiting {
-#     Get-History | Export-CliXml (Join-Path -Path "D:\Kelly\Documents" -ChildPath "pshist.xml")
-# } -SupportEvent
-# Import-CliXml (Join-Path -Path "D:\Kelly\Documents" -ChildPath "pshist.xml") | Add-History
 
 # Pretty PATH variable
 function Show-PathVariable {
