@@ -1,9 +1,4 @@
-#Import-Module PSConsoleTheme
-#Set-ConsoleTheme "Solarized Dark"
-
-# Powershell 6 config
-Import-Module PSReadline
-
+# PSReadline Options
 Set-PSReadlineOption -EditMode Vi -HistoryNoDuplicates
 Set-PSReadlineOption -ViModeIndicator Cursor
 
@@ -11,23 +6,19 @@ Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadlineKeyHandler -Key Ctrl+Tab -Function PossibleCompletions
 
-# If module is installed in a default location ($env:PSModulePath),
-# use this instead (see about_Modules for more information):
-Import-Module posh-git
+#$env:NAME = $env:COMPUTERNAME # Stupid fix because $PSVersionTable.Platform returns "Win32NT" not "Windows"
 
-$env:NAME = $env:COMPUTERNAME # Stupid fix because $PSVersionTable.Platform returns "Win32NT" not "Windows"
-Import-Module oh-my-posh
+# oh-my-posh Options
 Set-Theme Agnoster
 
-Import-Module PSColor
+# PSColor options
 
 $global:PSColor.File.Hidden.Color = 'Gray'
 
-Import-Module pscx
-
-Pop-Location
-
-Invoke-BatchFile "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
+# Borrowed from https://gist.github.com/jtucker/6886367fb58d5404032507576b43433f
+$installPath = &"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -version 16.0 -property installationpath
+Import-Module (Join-Path $installPath "Common7\Tools\vsdevshell\Microsoft.VisualStudio.DevShell.dll")
+Enter-VsDevShell -VsInstallPath $installPath -SkipAutomaticLocation
 
 # Stolen from https://github.com/scottmuc/poshfiles/blob/master/Microsoft.PowerShell_profile.ps1
 # inline functions, aliases and variables
@@ -38,6 +29,13 @@ function touch($file) { "" | Out-File $file -Encoding ASCII }
 function Get-Syntax([string] $cmdlet) {
   get-command $cmdlet -syntax
 }
+
+# Add a timestamp to tf get
+function tfg { 
+  tf get
+  "Completed: " + $(Get-Date) 
+}
+
 
 # Pretty PATH variable
 function Show-PathVariable {
@@ -74,4 +72,4 @@ function Show-AllColors {
   }
 }
 
-Set-Location C:\Dev
+. C:\Dev\GitHub\ok-ps\_ok.ps1
