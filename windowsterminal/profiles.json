@@ -1,4 +1,5 @@
 {
+    "$schema": "https://aka.ms/terminal-profiles-schema",
     "globals": {
         "alwaysShowTabs": true,
         "copyOnSelect": false,
@@ -199,12 +200,15 @@
     },
     "profiles": [{
             "acrylicOpacity": 0.75,
-            // "background" : "#012456",
+            //"background" : "#012456",
+            "backgroundImage": "C:\\Users\\KellyAdams\\Pictures\\18015.jpg",
+            "backgroundImageAlignment": "bottom",
+            "backgroundImageOpacity": 0.75,
+            "backgroundImageStretchMode": "uniformToFill",
             "closeOnExit": true,
             "colorScheme": "Tomorrow Night",
             "commandline": "powershell.exe",
             "cursorColor": "#FFFFFF",
-            "cursorShape": "filledBox",
             "fontFace": "FuraMono NF",
             "fontSize": 10,
             "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -214,7 +218,7 @@
             "padding": "0, 0, 0, 0",
             "snapOnInput": true,
             "startingDirectory": "C:\\Dev\\VSTS\\n2y_root",
-            "useAcrylic": true
+            "useAcrylic": false
         },
         {
             "acrylicOpacity": 0.75,
