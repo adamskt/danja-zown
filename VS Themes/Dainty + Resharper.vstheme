@@ -933,7 +933,7 @@
         <Foreground Type="CT_RAW" Source="FFB776FB" />
       </Color>
       <Color Name="vsvim_blockcaret">
-        <Background Type="CT_RAW" Source="FF000000" />
+        <Background Type="CT_RAW" Source="FFFFFFFF" />
         <Foreground Type="CT_RAW" Source="FF000000" />
       </Color>
       <Color Name="vsvim_margin">
