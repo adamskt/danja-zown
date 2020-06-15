@@ -1,0 +1,42 @@
+{
+	// Place your snippets for sql here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+	// From https://github.com/DigitalDuquette/code-snippets/blob/master/sql.json
+	
+	"Create db schema": {
+		"prefix": "sqlCreateSchema",
+		"body": [
+			"CREATE SCHEMA [schemaNameHere]",
+			"GO",
+			"",
+			"-- Run this query to see schema",
+			"-- SELECT * FROM sys.schemas;"
+		],
+		"description": "Create and view db schema."
+	},
+	"MERGE statement": {
+		"prefix": "sqlMERGE",
+		"body": [
+			"MERGE target_schema.target_table AS tgt ",
+			"USING source_schema.staging AS srs ON ( srs.id = tgt.id )",
+			"WHEN MATCHED THEN UPDATE SET tgt.column_name = s.column_name",
+			"WHEN NOT MATCHED BY TARGET THEN INSERT ( column_name )",
+			"VALUES ( srs.column_name )",
+			"WHEN NOT MATCHED BY SOURCE THEN DELETE;"
+		],
+		"description": "MERGE statement syntax"
+	}
+	
+}
