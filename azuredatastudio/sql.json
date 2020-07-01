@@ -37,6 +37,29 @@
 			"WHEN NOT MATCHED BY SOURCE THEN DELETE;"
 		],
 		"description": "MERGE statement syntax"
+	},
+
+
+	// N2Y Related stuff
+	"Add non-null column": {
+		"prefix": "n2yAddNonNullColumn",
+		"body": [
+			"-- Add a column called '${1:ColumnName} to '${2:SchemaName}' '${3:TableName}' of type '${4:ColumnType}' with default value '${5:DefaultValue}'",
+			"IF NOT EXISTS (",
+			"       SELECT 1",
+			"       FROM sys.columns",
+			"       WHERE columns.object_id = OBJECT_ID(N'$2.$3')",
+			"           AND columns.name = '$1'",
+			"       )",
+			"ALTER TABLE $2.$3 ADD $1 $4 NOT NULL CONSTRAINT DF_$3_$1 DEFAULT $5",
+			"GO",
+			"IF OBJECT_ID('$2.DF_$3_$1', 'D') IS NOT NULL",
+			"    ALTER TABLE $2.$3",
+			"DROP CONSTRAINT DF_$3_$1",
+			"GO"
+		],
+		"description": "Add a column that doesn't allow nulls with a default value and then removing the default."
+
 	}
 	
 }
