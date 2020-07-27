@@ -12,3 +12,5 @@ pushd .\tools\PowerShell\; .\_watch_typescript.ps1; popd # Run TSC watchers on a
 pushd .\tools\PowerShell\; .\_generate_typescript.ps1; popd; # Generate TypeScript from entities
 pushd .\tools\PowerShell\; .\_setup_urls.ps1; popd; # Setup IIS URLs
 pushd .\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; popd; # Recompile Sass
+Get-Process -name dotnet,iisexpress | Stop-Process; # Stop all sites
+ok 15; ok 2; # Restart all sites
