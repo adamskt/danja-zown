@@ -1,4 +1,4 @@
-tf scorch /exclude:.vs, .ok, *.vspscc # prompts to delete everything in local workspace not under source control in TFS
+tf scorch /exclude:.vs,.ok,*.vspscc # prompts to delete everything in local workspace not under source control in TFS
 Push-Location .\tools\PowerShell\; .\start_iisexpress.ps1; Pop-Location # Starts the site, but from the root
 tf get; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
 msbuild -m -v:m ./n2y.all.sln -restore -t:rebuild # Rebuilds everything, using multi-threading
