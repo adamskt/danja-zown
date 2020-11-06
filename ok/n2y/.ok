@@ -1,16 +1,16 @@
-tf scorch /exclude:.vs,.ok,*.vspscc # prompts to delete everything in local workspace not under source control in TFS
-pushd .\tools\PowerShell\; .\start_iisexpress.ps1; popd # Starts the site, but from the root
+tf scorch /exclude:.vs, .ok, *.vspscc # prompts to delete everything in local workspace not under source control in TFS
+Push-Location .\tools\PowerShell\; .\start_iisexpress.ps1; Pop-Location # Starts the site, but from the root
 tf get; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
 msbuild -m -v:m ./n2y.all.sln -restore -t:rebuild # Rebuilds everything, using multi-threading
 msbuild -m -v:m ./n2y.all.sln -restore -t:build # Builds everything, using multi-threading, with Nuget restore
-pushd .\tools\PowerShell\; .\_build_typescript.ps1; popd # Builds ALL the TypeScript
+Push-Location .\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location # Builds ALL the TypeScript
 msbuild -m -v:m ./n2y.all.sln -t:restore # Runs Nuget restore
-pushd .\tools\PowerShell\; .\_clean_typescript.ps1; .\_generate_typescript.ps1; .\_build_typescript.ps1; popd # Freshens all generated TypeScript
-pushd .\tools\PowerShell\; .\_generate_model.ps1 $arg[0]; popd; # Generate a model for $modelDirectory
-pushd .\tools\PowerShell\; .\_generate_databasescripts.ps1 $arg[0]; popd; # Generate a SQL script for $filename
-pushd .\tools\PowerShell\; .\_watch_typescript.ps1; popd # Run TSC watchers on all scripts projects
-pushd .\tools\PowerShell\; .\_generate_typescript.ps1; popd; # Generate TypeScript from entities
-pushd .\tools\PowerShell\; .\_setup_urls.ps1; popd; # Setup IIS URLs
-pushd .\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; popd; # Recompile Sass
-Get-Process -name dotnet,iisexpress | Stop-Process; # Stop all sites
-ok 15; ok 2; # Restart all sites
+Push-Location .\tools\PowerShell\; .\_clean_typescript.ps1; .\_generate_typescript.ps1; .\_build_typescript.ps1; Pop-Location # Freshens all generated TypeScript
+$loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_model.ps1 $loc; Pop-Location; # Generate a model for $modelDirectory
+$loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_databasescripts.ps1 $loc; Pop-Location; # Generate a SQL script for $filename
+Push-Location .\tools\PowerShell\; .\_watch_typescript.ps1; Pop-Location # Run TSC watchers on all scripts projects
+Push-Location .\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; # Generate TypeScript from entities
+Push-Location .\tools\PowerShell\; .\_setup_urls.ps1; Pop-Location; # Setup IIS URLs
+Push-Location .\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
+Get-Process -name dotnet, iisexpress | Stop-Process; # Stop all sites
+Get-Process -name dotnet, iisexpress | Stop-Process; Push-Location .\tools\PowerShell\; .\start_iisexpress.ps1; Pop-Location; # Restart all sites
