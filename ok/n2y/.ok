@@ -1,10 +1,10 @@
-tf scorch /exclude:.vs,.ok,*.vspscc # prompts to delete everything in local workspace not under source control in TFS
-Push-Location .\tools\PowerShell\; .\start_iisexpress.ps1; Pop-Location # Starts the site, but from the root
-tf get; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
-msbuild -m -v:m ./n2y.all.sln -restore -t:rebuild # Rebuilds everything, using multi-threading
-msbuild -m -v:m ./n2y.all.sln -restore -t:build # Builds everything, using multi-threading, with Nuget restore
+tf reconcile /clean /recursive /noprompt /exclude:.vs,.ok,*.vspscc # Updates local items on disk to match the server's structure.
+Push-Location .\tools\PowerShell\; .\start_websites.ps1; Pop-Location # Starts the site, but from the root
+tf get /noprompt; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
+dotnet build ./n2y.all.sln -v:m --no-incremental # Rebuilds everything, using multi-threading
+dotnet build ./n2y.all.sln -v:m # Incrementally builds everything, using multi-threading
 Push-Location .\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location # Builds ALL the TypeScript
-msbuild -m -v:m ./n2y.all.sln -t:restore # Runs Nuget restore
+Push-Location .\tools\PowerShell\; .\_restore.ps1; Pop-Location # Runs Nuget restore
 Push-Location .\tools\PowerShell\; .\_clean_typescript.ps1; .\_generate_typescript.ps1; .\_build_typescript.ps1; Pop-Location # Freshens all generated TypeScript
 $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_model.ps1 $loc; Pop-Location; # Generate a model for $modelDirectory
 $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_databasescripts.ps1 $loc; Pop-Location; # Generate a SQL script for $filename
@@ -12,5 +12,5 @@ Push-Location .\tools\PowerShell\; .\_watch_typescript.ps1; Pop-Location # Run T
 Push-Location .\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; # Generate TypeScript from entities
 Push-Location .\tools\PowerShell\; .\_setup_urls.ps1; Pop-Location; # Setup IIS URLs
 Push-Location .\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
-Get-Process -name dotnet, iisexpress | Stop-Process; # Stop all sites
-Get-Process -name dotnet, iisexpress | Stop-Process; Push-Location .\tools\PowerShell\; .\start_iisexpress.ps1; Pop-Location; # Restart all sites
+Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; # Stop all sites
+Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; Push-Location .\tools\PowerShell\; .\start_websites.ps1; Pop-Location; # Restart all sites
