@@ -1,25 +1,26 @@
 # TFS commands
-    torch: tf reconcile /clean /recursive /noprompt /exclude:.vs,.ok,*.vspscc # Updates local items on disk to match the server's structure.
-      get: tf get; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
+     torch: tf reconcile /clean /recursive /noprompt /exclude:.vs,.ok,*.vspscc # Updates local items on disk to match the server's structure.
+       get: tf get; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
 
 # C# Building
-  rebuild: dotnet build ./n2y.all.sln -v:m --no-incremental --interactive --no-restore # Rebuilds everything, using multi-threading
-    build: dotnet build ./n2y.all.sln -v:m --interactive --no-restore # Incrementally builds everything, using multi-threading
-  restore: Push-Location .\tools\PowerShell\; .\_restore.ps1; Pop-Location # Runs Nuget restore
-    watch: dotnet run --project Utilities\n2ycli\ -- website -a watch
+   rebuild: dotnet build ./n2y.all.sln -v:m --no-incremental --interactive --no-restore; $(Get-Date) # Rebuilds everything, using multi-threading
+     build: dotnet build ./n2y.all.sln -v:m --interactive --no-restore; $(Get-Date) # Incrementally builds everything, using multi-threading
+   restore: Push-Location .\tools\PowerShell\; .\_restore.ps1; Pop-Location; $(Get-Date) # Runs Nuget restore
+ watch-cli: dotnet run --project Utilities\n2ycli\ -- website -a watch # Watch all sites with n2ycli
+     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); .\n2ycli.cmd website -a stop -p $proj; dotnet watch run --project .\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
 
 # TypeScript Building
-  build-ts: Push-Location .\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location # Builds ALL the TypeScript
+  build-ts: Push-Location .\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location; $(Get-Date) # Builds ALL the TypeScript
   regen-ts: Push-Location .\tools\PowerShell\; .\_clean_typescript.ps1; .\_generate_typescript.ps1; .\_build_typescript.ps1; Pop-Location # Freshens all generated TypeScript
   watch-ts: Push-Location .\tools\PowerShell\; .\_watch_typescript.ps1; Pop-Location # Run TSC watchers on all scripts projects
 
 # Code generation
  gen-model: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_model.ps1 $loc; Pop-Location; # Generate a model for $modelDirectory
    gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_databasescripts.ps1 $loc; Pop-Location; # Generate a SQL script for $filename
-       gen: Push-Location .\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; # Generate TypeScript from entities
+       gen: Push-Location .\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; $(Get-Date) # Generate TypeScript from entities
 
 # Web site command
-      sass: Push-Location .\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
+build-sass: Push-Location .\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
      start: Push-Location .\tools\PowerShell\; .\start_websites.ps1; Pop-Location # Starts the site, but from the root
       stop: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; # Stop all sites
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; Push-Location .\tools\PowerShell\; .\start_websites.ps1; Pop-Location; # Restart all sites
