@@ -12,34 +12,71 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
-
 	// From https://github.com/DigitalDuquette/code-snippets/blob/master/sql.json
-	
 	"Create db schema": {
 		"prefix": "sqlCreateSchema",
 		"body": [
-			"CREATE SCHEMA [schemaNameHere]",
+			"CREATE SCHEMA [${1:name}]",
 			"GO",
 			"",
 			"-- Run this query to see schema",
-			"-- SELECT * FROM sys.schemas;"
+			"SELECT * FROM sys.schemas;"
 		],
 		"description": "Create and view db schema."
+	},
+	"Table existence test": {
+		"prefix": "sqlExist",
+		"body": [
+			"IF (EXISTS (SELECT * ",
+			"     FROM INFORMATION_SCHEMA.TABLES ",
+			"     WHERE TABLE_SCHEMA = '${1:schema}' ",
+			"     AND  TABLE_NAME = '${2:table}'))",
+			"BEGIN",
+			"  -- work to do if the table exists",
+			"END"
+		],
+		"description": ""
 	},
 	"MERGE statement": {
 		"prefix": "sqlMERGE",
 		"body": [
-			"MERGE target_schema.target_table AS tgt ",
-			"USING source_schema.staging AS srs ON ( srs.id = tgt.id )",
-			"WHEN MATCHED THEN UPDATE SET tgt.column_name = s.column_name",
-			"WHEN NOT MATCHED BY TARGET THEN INSERT ( column_name )",
-			"VALUES ( srs.column_name )",
+			"MERGE ${1:target_schema}.${2:target_table} AS tgt ",
+			"USING ${3:source_schema}.staging AS srs ON ( srs.${4:id_column} = tgt.${4:id_column} )",
+			"WHEN MATCHED THEN UPDATE SET tgt.${5:value_column_name} = srs.${5:value_column_name}",
+			"WHEN NOT MATCHED BY TARGET THEN INSERT ( ${5:value_column_name} )",
+			"VALUES ( srs.${5:value_column_name} )",
 			"WHEN NOT MATCHED BY SOURCE THEN DELETE;"
 		],
 		"description": "MERGE statement syntax"
 	},
-
-
+	"Find dependencies": {
+		"prefix": "sqlDepend",
+		"body": [
+			"EXEC sp_depends @objname = N'${1:schema}.${2:table}' ;"
+		],
+		"description": "Using sp_depends to find dependencies"
+	},
+	// From https://github.com/Ungerfall/dotfiles/blob/master/azuredatastudio/snippets/sql.json
+	"Fast forward cursor": {
+		"prefix": "sqlCursorFF",
+		"body": [
+			"DECLARE @$1 INT;",
+			"DECLARE $2 CURSOR LOCAL FAST_FORWARD READ_ONLY FOR $3;",
+			"",
+			"OPEN $2;",
+			"FETCH NEXT FROM $2 INTO @$1;",
+			"",
+			"WHILE @@FETCH_STATUS = 0",
+			"BEGIN",
+			"\t$0",
+			"",
+			"FETCH NEXT FROM $2 INTO @$1;",
+			"END;",
+			"",
+			"CLOSE $2;",
+			"DEALLOCATE $2;"
+		]
+	},
 	// N2Y Related stuff
 	"Add non-null column": {
 		"prefix": "n2yAddNonNullColumn",
@@ -59,7 +96,44 @@
 			"GO"
 		],
 		"description": "Add a column that doesn't allow nulls with a default value and then removing the default."
-
-	}
-	
+	},
+	"Backup and drop table": {
+		"prefix": "n2yBackupDrop",
+		"body": [
+			"IF (",
+			"       NOT EXISTS (",
+			"           SELECT *",
+			"           FROM INFORMATION_SCHEMA.TABLES",
+			"           WHERE TABLE_SCHEMA = '${1:SchemaName}'",
+			"           AND TABLE_NAME = '__${2:TableName}'",
+			"       )",
+			"   )",
+			"BEGIN",
+			"   SELECT *",
+			"   INTO ${1:SchemaName}.__${2:TableName}",
+			"   FROM ${1:SchemaName}.${2:TableName};",
+			"",
+			"   DROP TABLE ${1:SchemaName}.${2:TableName};",
+			"END"
+		],
+		"description": "Copies all data from an existing table into a new backup table and drops the original."
+	},
+	"Add View Properties": {
+		"prefix": "n2yViewExtendedProps",
+		"body": [
+			"-- Add a extended properties to a SQL view for '${2:ViewName}' to '${1:SchemaName}' for Namespace: '${3:Namespace}' and optionally Project: '${4:Project}'",
+			"EXEC AddViewDescription '$1', '$2', 'Namespace', '$3';",
+			"EXEC AddViewDescription '$1', '$2', 'Project', '$4';",
+		],
+		"description": "Adds extended properties to a SQL view so the N2Y code generation will pick it up.  By default all models will be created in the n2y project, so only add that if you want the view class to not live in n2y.DataAccess.Models.Shared."
+	},
+	"Add Table Properties": {
+		"prefix": "n2yTableExtendedProps",
+		"body": [
+			"-- Add a extended properties to a SQL table for '${2:TableName}' to '${1:SchemaName}' for Namespace: '${3:Namespace}' and optionally Project: '${4:Project}'",
+			"EXEC AddViewDescription '$1', '$2', 'Namespace', '$3';",
+			"EXEC AddViewDescription '$1', '$2', 'Project', '$4';",
+		],
+		"description": "Adds extended properties to a SQL Table so the N2Y code generation will pick it up.  By default all models will be created in the n2y project, so only add that if you want the view class to not live in n2y.DataAccess.Models.Shared."
+	},
 }
