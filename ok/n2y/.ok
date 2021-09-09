@@ -16,7 +16,7 @@
 
 # Code generation
  gen-model: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_model.ps1 $loc; Pop-Location; # Generate a model for $modelDirectory
-   gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_databasescripts.ps1 $loc; Pop-Location; # Generate a SQL script for $filename
+   gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); &dotnet run --project .\Utilities\n2y.VisualStudio.Database -- --solutionDirectory $(Get-Location) --fileName $loc; # Generate a SQL script for $filename
        gen: Push-Location .\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; $(Get-Date) # Generate TypeScript from entities
 
 # Web site command
