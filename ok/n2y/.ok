@@ -7,7 +7,7 @@
      build: dotnet build ./n2y.all.sln -v:m --interactive --no-restore; $(Get-Date) # Incrementally builds everything, using multi-threading
    restore: Push-Location .\tools\PowerShell\; .\_restore.ps1; Pop-Location; $(Get-Date) # Runs Nuget restore
  watch-cli: dotnet run --project Utilities\n2ycli\ -- website -a watch # Watch all sites with n2ycli
-     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); .\n2ycli.cmd website -a stop -p $proj; dotnet watch run --project .\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
+     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); .\n2ycli.cmd website -a stop -p $proj; dotnet watch run --no-hot-reload --project .\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
 
 # TypeScript Building
   build-ts: Push-Location .\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location; $(Get-Date) # Builds ALL the TypeScript
