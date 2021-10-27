@@ -7,8 +7,8 @@
    rebuild: dotnet build ./src/n2y.all.sln -v:m --no-incremental --interactive --no-restore; $(Get-Date) # Rebuilds everything, using multi-threading
      build: dotnet build ./src/n2y.all.sln -v:m --interactive --no-restore; $(Get-Date) # Incrementally builds everything, using multi-threading
    restore: Push-Location .\src\tools\PowerShell\; .\_restore.ps1; Pop-Location; $(Get-Date) # Runs Nuget & npm restore
- watch-cli: dotnet run --project Utilities\n2ycli\ -- website -a watch # Watch all sites with n2ycli
-     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); .\src\n2ycli.cmd website -a stop -p $proj; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
+ watch-cli: dotnet run --project .\src\Utilities\n2ycli\ -- website -a watch # Watch all sites with n2ycli
+     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a stop -p $proj; Pop-Location; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
 
 # TypeScript Building
   build-ts: Push-Location .\src\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location; $(Get-Date) # Builds ALL the TypeScript
@@ -24,5 +24,5 @@
     config: $environment = $arg ?? $(throw "Environment named required"); Copy-Item ".\src\tools\config\connectionStrings-$environment.config" ".\src\tools\config\connectionStrings.config"
 build-sass: Push-Location .\src\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
      start: Push-Location .\src\tools\PowerShell\; .\start_websites.ps1; Pop-Location # Starts the site, but from the root
-      stop: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; # Stop all sites
+      stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a stop -p $arg; Pop-Location; }); # Stop specific or all sites
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; ok start; # Restart all sites
