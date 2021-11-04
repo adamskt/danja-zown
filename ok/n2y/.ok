@@ -4,8 +4,9 @@
      fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
 
 # C# Building
-   rebuild: dotnet build ./src/n2y.all.sln -v:m --no-incremental --interactive --no-restore; $(Get-Date) # Rebuilds everything, using multi-threading
-     build: dotnet build ./src/n2y.all.sln -v:m --interactive --no-restore; $(Get-Date) # Incrementally builds everything, using multi-threading
+   rebuild: dotnet build .\src\n2y.all.sln -v:m --no-incremental --interactive --no-restore; $(Get-Date) # Rebuilds everything, using multi-threading
+     build: dotnet build .\src\n2y.all.sln -v:m --interactive --no-restore; $(Get-Date) # Incrementally builds everything, using multi-threading
+ build-all: Push-Location .\src\tools\PowerShell\; .\_build.ps1; Pop-Location; # Runs the N2Y script that builds everything
    restore: Push-Location .\src\tools\PowerShell\; .\_restore.ps1; Pop-Location; $(Get-Date) # Runs Nuget & npm restore
  watch-cli: dotnet run --project .\src\Utilities\n2ycli\ -- website -a watch # Watch all sites with n2ycli
      watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a stop -p $proj; Pop-Location; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
@@ -20,7 +21,7 @@
    gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); &dotnet run --project .\Utilities\n2y.VisualStudio.Database -- --solutionDirectory $(Get-Location) --fileName $loc; # Generate a SQL script for $filename
     gen-ts: Push-Location .\src\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; $(Get-Date) # Generate TypeScript from entities
 
-# Web site command
+# Web site commands
     config: $environment = $arg ?? $(throw "Environment named required"); Copy-Item ".\src\tools\config\connectionStrings-$environment.config" ".\src\tools\config\connectionStrings.config"
 build-sass: Push-Location .\src\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
      start: Push-Location .\src\tools\PowerShell\; .\start_websites.ps1; Pop-Location # Starts the site, but from the root
