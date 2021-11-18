@@ -2,28 +2,27 @@
      clean: git clean -d -fx
       pull: git pull; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
      fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
+     prune: git remote prune origin # Cleans up local branches that were deleted on DevOps
 
 # C# Building
-   rebuild: dotnet build .\src\n2y.all.sln -v:m --no-incremental --interactive --no-restore; $(Get-Date) # Rebuilds everything, using multi-threading
-     build: dotnet build .\src\n2y.all.sln -v:m --interactive --no-restore; $(Get-Date) # Incrementally builds everything, using multi-threading
- build-all: Push-Location .\src\tools\PowerShell\; .\_build.ps1; Pop-Location; # Runs the N2Y script that builds everything
-   restore: Push-Location .\src\tools\PowerShell\; .\_restore.ps1; Pop-Location; $(Get-Date) # Runs Nuget & npm restore
+   rebuild: dotnet build .\src\n2y.all.sln -v:m --no-incremental --interactive --no-restore; # Rebuilds everything, using multi-threading
+     build: dotnet build .\src\n2y.all.sln -v:m --interactive --no-restore; # Incrementally builds everything, using multi-threading
+ build-all: dotnet run --project .\src\Utilities\n2ycli\ -- solution -a build; # Runs the N2Y script that builds everything
+   restore: dotnet run --project .\src\Utilities\n2ycli\ -- solution -a restore; # Runs Nuget & npm restore
  watch-cli: dotnet run --project .\src\Utilities\n2ycli\ -- website -a watch # Watch all sites with n2ycli
-     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a stop -p $proj; Pop-Location; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
+     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
 
 # TypeScript Building
-  build-ts: Push-Location .\src\tools\PowerShell\; .\_build_typescript.ps1; Pop-Location; $(Get-Date) # Builds ALL the TypeScript
-  regen-ts: Push-Location .\src\tools\PowerShell\; .\_clean_typescript.ps1; .\_generate_typescript.ps1; .\_build_typescript.ps1; Pop-Location # Freshens all generated TypeScript
-  watch-ts: Push-Location .\src\tools\PowerShell\; .\_watch_typescript.ps1; Pop-Location # Run TSC watchers on all scripts projects
+  build-ts: dotnet run --project .\src\Utilities\n2ycli\ -- typescript -a build; # Builds ALL the TypeScript
+  regen-ts: dotnet run --project .\src\Utilities\n2ycli\ -- typescript -a rebuild; # Freshens all generated TypeScript
 
 # Code generation
- gen-model: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location .\tools\PowerShell\; .\_generate_model.ps1 $loc; Pop-Location; # Generate a model for $modelDirectory
    gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); &dotnet run --project .\Utilities\n2y.VisualStudio.Database -- --solutionDirectory $(Get-Location) --fileName $loc; # Generate a SQL script for $filename
-    gen-ts: Push-Location .\src\tools\PowerShell\; .\_generate_typescript.ps1; Pop-Location; $(Get-Date) # Generate TypeScript from entities
+    gen-ts: dotnet run --project .\src\Utilities\n2ycli\ -- typescript -a generate; # Generate TypeScript from entities
 
 # Web site commands
     config: $environment = $arg ?? $(throw "Environment named required"); Copy-Item ".\src\tools\config\connectionStrings-$environment.config" ".\src\tools\config\connectionStrings.config"
-build-sass: Push-Location .\src\tools\CodeGenerators\WebCompiler\; .\WebCompiler.bat; Pop-Location; # Recompile Sass
-     start: Push-Location .\src\tools\PowerShell\; .\start_websites.ps1; Pop-Location # Starts the site, but from the root
+build-sass: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- style -a build; Pop-Location; # Recompile Sass
+     start: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a start; Pop-Location; # Starts the site, but from the root
       stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a stop -p $arg; Pop-Location; }); # Stop specific or all sites
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; ok start; # Restart all sites
