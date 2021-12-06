@@ -7,22 +7,22 @@
 # C# Building
    rebuild: dotnet build .\src\n2y.all.sln -v:m --no-incremental --interactive --no-restore; # Rebuilds everything, using multi-threading
      build: dotnet build .\src\n2y.all.sln -v:m --interactive --no-restore; # Incrementally builds everything, using multi-threading
- build-all: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution -a build; Pop-Location; # Runs the N2Y script that builds everything
-   restore: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution -a restore; Pop-Location; # Runs Nuget & npm restore
- watch-cli: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a watch; Pop-Location; # Watch all sites with n2ycli
+ build-all: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution build; Pop-Location; # Runs the N2Y script that builds everything
+   restore: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution restore; Pop-Location; # Runs Nuget & npm restore
+ watch-cli: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website watch; Pop-Location; # Watch all sites with n2ycli
      watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
 
 # TypeScript Building
-  build-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript -a build; Pop-Location; # Builds ALL the TypeScript
-  regen-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript -a rebuild; Pop-Location; # Freshens all generated TypeScript
+  build-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript build; Pop-Location; # Builds ALL the TypeScript
+  regen-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript rebuild; Pop-Location; # Freshens all generated TypeScript
 
 # Code generation
    gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location src; dotnet run --project .\Utilities\n2y.VisualStudio.Database -- --solutionDirectory $(Get-Location) --fileName $loc; Pop-Location; # Generate a SQL script for $filename
-    gen-ts: Push-Location src; dotnet run --project .\src\Utilities\n2ycli\ -- typescript -a generate; Pop-Location; # Generate TypeScript from entities
+    gen-ts: Push-Location src; dotnet run --project .\src\Utilities\n2ycli\ -- typescript generate; Pop-Location; # Generate TypeScript from entities
 
 # Web site commands
     config: $environment = $arg ?? $(throw "Environment named required"); Copy-Item ".\src\tools\config\connectionStrings-$environment.config" ".\src\tools\config\connectionStrings.config"
-build-sass: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- style -a build; Pop-Location; # Recompile Sass
-     start: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a start; Pop-Location; # Starts the site, but from the root
-      stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website -a stop -p $arg; Pop-Location; }); # Stop specific or all sites
+build-sass: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- style build; Pop-Location; # Recompile Sass
+     start: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website start; Pop-Location; # Starts the site, but from the root
+      stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website stop -p $arg; Pop-Location; }); # Stop specific or all sites
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; ok start; # Restart all sites
