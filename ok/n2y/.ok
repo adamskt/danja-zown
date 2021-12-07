@@ -18,7 +18,7 @@
 
 # Code generation
    gen-sql: $loc = $(if ($null -eq $arg) { "" } else { Resolve-Path -Path $arg[0] }); Push-Location src; dotnet run --project .\Utilities\n2y.VisualStudio.Database -- --solutionDirectory $(Get-Location) --fileName $loc; Pop-Location; # Generate a SQL script for $filename
-    gen-ts: Push-Location src; dotnet run --project .\src\Utilities\n2ycli\ -- typescript generate; Pop-Location; # Generate TypeScript from entities
+    gen-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript generate; Pop-Location; # Generate TypeScript from entities
 
 # Web site commands
     config: $environment = $arg ?? $(throw "Environment named required"); Copy-Item ".\src\tools\config\connectionStrings-$environment.config" ".\src\tools\config\connectionStrings.config"
