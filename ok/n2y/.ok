@@ -1,5 +1,5 @@
 # Git commands
-     clean: git clean -d -fx
+     clean: git clean -d -fx -e .ok
       pull: git pull; $(Get-Date) # Gets the latest code, and shows a timestamp so you see how stale it is later
      fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
      prune: git remote prune origin # Cleans up local branches that were deleted on DevOps
@@ -11,6 +11,7 @@
    restore: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution restore; Pop-Location; # Runs Nuget & npm restore
  watch-cli: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website watch; Pop-Location; # Watch all sites with n2ycli
      watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
+    format: dotnet format .\src\n2y.All.sln
 
 # TypeScript Building
   build-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript build; Pop-Location; # Builds ALL the TypeScript
