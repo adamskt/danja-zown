@@ -10,7 +10,7 @@
  build-all: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution build; Pop-Location; # Runs the N2Y script that builds everything
    restore: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution restore; Pop-Location; # Runs Nuget & npm restore
  watch-cli: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website watch; Pop-Location; # Watch all sites with n2ycli
-     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --no-hot-reload --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
+     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
     format: dotnet format ./src/n2y.All.sln --verify-no-changes -v diag --no-restore
 
 # TypeScript Building
@@ -27,3 +27,6 @@ build-sass: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- style
      start: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website start; Pop-Location; # Starts the site, but from the root
       stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website stop -p $arg; Pop-Location; }); # Stop specific or all sites
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; ok start; # Restart all sites
+
+# IDE Stuff
+       dev: $sln = $arg ?? $(throw "Solution name required"); devenv ".\src\$sln.slnf"
