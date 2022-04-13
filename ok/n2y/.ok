@@ -23,8 +23,8 @@
 # Web site commands
     config: $environment = $arg ?? $(throw "Environment named required"); Copy-Item ".\src\tools\config\connectionStrings-$environment.config" ".\src\tools\config\connectionStrings.config"
 build-sass: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- style build; Pop-Location; # Recompile Sass
-     start: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website start; Pop-Location; # Starts the site, but from the root
-      stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website stop -p $arg; Pop-Location; }); # Stop specific or all sites
+     start: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website start; Pop-Location; Start-Process azurite.cmd -ArgumentList "-l", "..\azurite"; # Starts the site, but from the root
+      stop: $(if ($null -eq $arg) { Get-Process -name dotnet,iisexpress,node -ErrorAction SilentlyContinue | Stop-Process; } else { Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website stop -p $arg; Pop-Location; }); # Stop specific or all sites
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; ok start; # Restart all sites
 
 # IDE Stuff
