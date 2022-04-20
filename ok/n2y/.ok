@@ -28,5 +28,5 @@ build-sass: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- style
    restart: Get-Process -name dotnet,iisexpress -ErrorAction SilentlyContinue | Stop-Process; ok start; # Restart all sites
 
 # IDE Stuff
-       dev: $sln = $arg ?? $(throw "Solution name required"); devenv ".\src\$sln.slnf"
+       dev: $sln = ($null -eq $arg) ? ".\src\n2y.All.sln" : ".\src\$arg.slnf"; devenv $sln; # Starts VS with either a filtered solution or the full one
     format: dotnet format whitespace --verify-no-changes -v diag --folder .
