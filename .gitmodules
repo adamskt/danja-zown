@@ -1,6 +1,3 @@
 [submodule "submodules/jaykul"]
 	path = submodules/jaykul
 	url = https://github.com/Jaykul/Profile.git
-[submodule "submodules/SSMSSnippets"]
-	path = submodules/SSMSSnippets
-	url = https://github.com/kofoide/SSMSSnippets.git
