@@ -10,7 +10,7 @@
  build-all: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution build; Pop-Location; # Runs the N2Y script that builds everything
    restore: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- solution restore; Pop-Location; # Runs Nuget & npm restore
  watch-cli: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- website watch; Pop-Location; # Watch all sites with n2ycli
-     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
+     watch: $proj = $(if ($null -eq $arg) { throw "missing project" } else { $arg }); ok stop $proj; dotnet watch run --non-interactive --project .\src\n2y.Web.Websites.$proj\n2y.Web.Websites.$proj.csproj # Watch a site with dotnet watch (better)
 
 # TypeScript Building
   build-ts: Push-Location src; dotnet run --project .\Utilities\n2ycli\ -- typescript build; Pop-Location; # Builds ALL the TypeScript
