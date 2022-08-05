@@ -1,0 +1,7 @@
+# IDE Stuff
+	  dev: $sln = ($null -eq $arg) ? ".\INPUT.sln" : ".\$arg.sln"; devenv $sln;  # Opens main solution by default or named sln
+ dev-ffme: devenv .\Submodules\ffmediaelement\Unosquare.FFME.sln  # Opens FFME submodule
+
+# Git commands
+	fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
+	prune: git remote prune origin # Cleans up local branches that were deleted on DevOps
