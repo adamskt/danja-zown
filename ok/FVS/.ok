@@ -5,3 +5,7 @@
 # Git commands
 	fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
 	prune: git remote prune origin # Cleans up local branches that were deleted on DevOps
+
+# Environment Stuff
+	down-sdk: winget uninstall --id Microsoft.DotNet.SDK.6 # Removes the current .NET version 6 SDK
+	up-sdk: winget install -e --id Microsoft.DotNet.SDK.6 -v 6.0.301 # Installs the version iNPUT-ACE is pinned to in global.json
