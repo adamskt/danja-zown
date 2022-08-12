@@ -2,16 +2,16 @@
 	  dev: $sln = ($null -eq $arg) ? ".\INPUT.sln" : ".\$arg.sln"; devenv $sln;  # Opens main solution by default or named sln
 
 # Build
-	build: msbuild -m -v:m .\INPUT.sln  # Build everything
-  rebuild: msbuild -m -v:m -t:rebuild .\INPUT.sln  # Rebuild everything
+	build: msbuild -m -v:m .\INPUT.sln  					# Build everything
+  rebuild: msbuild -m -v:m -t:rebuild .\INPUT.sln  			# Rebuild everything
 
 # Test
 	 test: dotnet test .\INPUT.sln --no-build --filter "FullyQualifiedName~INPUT.Tests|FullyQualifiedName~INPUT.Lib.Tests"  # Runs the tests in INPUT.Tests and INPUT.Lib.Tests
 
 # Git commands
-	fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
-	prune: git remote prune origin # Cleans up local branches that were deleted on DevOps
+	fetch: git fetch --all; $(Get-Date) 					# Gets latest metadata and branches
+	prune: git remote prune origin 							# Cleans up local branches that were deleted on DevOps
 
 # Environment Stuff
-	down-sdk: winget uninstall --id Microsoft.DotNet.SDK.6 # Removes the current .NET version 6 SDK
-	up-sdk: winget install -e --id Microsoft.DotNet.SDK.6 -v 6.0.301 # Installs the version iNPUT-ACE is pinned to in global.json
+ down-sdk: winget uninstall --id Microsoft.DotNet.SDK.6 	# Removes the current .NET version 6 SDK
+   up-sdk: winget install -e --id Microsoft.DotNet.SDK.6  	# Installs the dotnet 6 stable version
