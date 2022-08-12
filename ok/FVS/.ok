@@ -1,6 +1,12 @@
 # IDE Stuff
 	  dev: $sln = ($null -eq $arg) ? ".\INPUT.sln" : ".\$arg.sln"; devenv $sln;  # Opens main solution by default or named sln
- dev-ffme: devenv .\Submodules\ffmediaelement\Unosquare.FFME.sln  # Opens FFME submodule
+
+# Build
+	build: msbuild -m -v:m .\INPUT.sln  # Build everything
+  rebuild: msbuild -m -v:m -t:rebuild .\INPUT.sln  # Rebuild everything
+
+# Test
+	 test: dotnet test .\INPUT.sln --no-build --filter "FullyQualifiedName~INPUT.Tests|FullyQualifiedName~INPUT.Lib.Tests"  # Runs the tests in INPUT.Tests and INPUT.Lib.Tests
 
 # Git commands
 	fetch: git fetch --all; $(Get-Date) # Gets latest metadata and branches
