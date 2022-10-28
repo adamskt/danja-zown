@@ -1,9 +1,9 @@
 # IDE Stuff
-	  dev: $sln = ($null -eq $arg) ? ".\INPUT.sln" : ".\$arg.sln"; devenv $sln;  # Opens main solution by default or named sln
+	  dev: $sln = ($null -eq $arg) ? ".\INPUT.sln" : $arg; devenv $sln;  # Opens main solution by default or named sln
 
 # Build
-	build: msbuild -m -v:m .\INPUT.sln  					# Build everything
-  rebuild: msbuild -m -v:m -t:rebuild .\INPUT.sln  			# Rebuild everything
+	build: $sln = ($null -eq $arg) ? ".\INPUT.sln" : $arg; msbuild -m -v:m $sln  					# Build everything
+  rebuild: $sln = ($null -eq $arg) ? ".\INPUT.sln" : $arg; msbuild -m -v:m -t:rebuild $sln  		# Rebuild everything
 
 # Test
 	 test: dotnet test .\INPUT.sln --no-build --filter "FullyQualifiedName~INPUT.Tests|FullyQualifiedName~INPUT.Lib.Tests"  # Runs the tests in INPUT.Tests and INPUT.Lib.Tests
@@ -11,6 +11,7 @@
 # Git commands
 	fetch: git fetch --all; $(Get-Date) 					# Gets latest metadata and branches
 	prune: git remote prune origin 							# Cleans up local branches that were deleted on DevOps
+	clean: git clean -d -fx -e .ok
 
 # Environment Stuff
  down-sdk: winget uninstall --id Microsoft.DotNet.SDK.6 	# Removes the current .NET version 6 SDK
