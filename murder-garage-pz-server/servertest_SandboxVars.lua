@@ -7,8 +7,7 @@ SandboxVars = {
     -- 4 = Normal
     -- 5 = Low
     -- 6 = None
-    -- Rising preset: Low / heavily reduced zombie population
-    Zombies = 5,
+    Zombies = 3,
     -- How zombies are distributed across the map. Default = Urban Focused
     -- 1 = Urban Focused
     -- 2 = Uniform
@@ -259,8 +258,7 @@ SandboxVars = {
     -- 4 = Sometimes
     -- 5 = Often
     -- 6 = Very Often
-    -- Rising preset: no house alarms
-    Alarm = 1,
+    Alarm = 4,
     -- How frequently the doors of homes and buildings will be locked when discovered. Default = Very Often
     -- 1 = Never
     -- 2 = Extremely Rare
@@ -270,8 +268,7 @@ SandboxVars = {
     -- 6 = Very Often
     LockedHouses = 6,
     -- Spawn with Chips, a Water Bottle, a Small Backpack, a Baseball Bat, and a Hammer.
-    -- Rising preset: start with a set of useful items
-    StarterKit = true,
+    StarterKit = false,
     -- Nutritional value of food affects the player's condition. Turning this off will stop the player gaining or losing weight.
     Nutrition = true,
     -- How fast that food will spoil, inside or outside of a fridge. Default = Normal
@@ -397,14 +394,12 @@ SandboxVars = {
     -- 5 = Always Day
     NightLength = 3,
     -- If survivors can get broken limbs from impacts, zombie damage, falls etc.
-    -- Rising preset: no bone fractures
-    BoneFracture = false,
+    BoneFracture = true,
     -- The impact that injuries have on your body, and their healing time. Default = Normal
     -- 1 = Low
     -- 2 = Normal
     -- 3 = High
-    -- Rising preset: half injury severity
-    InjurySeverity = 1,
+    InjurySeverity = 2,
     -- How long, in hours, before dead zombie bodies disappear from the world.  If 0, maggots will not spawn on corpses. Min: -1.00 Max: 2147483647.00 Default: 216.00
     HoursForCorpseRemoval = 216.0,
     -- The impact that nearby decaying bodies has on the player's health and emotions. Default = Normal
@@ -567,8 +562,7 @@ SandboxVars = {
     -- 4 = High
     RecentlySurvivorVehicles = 2,
     -- If certain melee weapons will be able to strike multiple zombies in one hit.
-    -- Rising preset: can multi-hit zombies
-    MultiHitZombies = true,
+    MultiHitZombies = false,
     -- Chance of being bitten when a zombie attacks from behind. Default = High
     -- 1 = Low
     -- 2 = Medium
@@ -742,8 +736,7 @@ SandboxVars = {
     -- If true clothing with randomized tints will not be so dark to be virtually black.
     NoBlackClothes = true,
     -- Disables the failure chances when climbing sheet ropes or over walls.
-    -- Rising preset: easier climbing
-    EasyClimbing = true,
+    EasyClimbing = false,
     -- The maximum hours of fuel that can be placed in a campfire, wood stove etc. Min: 1 Max: 168 Default: 8
     MaximumFireFuelHours = 8,
     -- Replaces Chance-To-Hit mechanics with Chance-To-Damage calculations.  This mode prioritizes player aiming. Default = Zombies only
@@ -796,8 +789,7 @@ SandboxVars = {
         -- 2 = Fast Shamblers
         -- 3 = Shamblers
         -- 4 = Random
-        -- Rising preset: slower zombies
-        Speed = 3,
+        Speed = 2,
         -- If Random Speed is enabled, this controls what percentage of zombies are Sprinters. Check the "Advanced" box below to use a custom percentage. Min: 0 Max: 100 Default: 0
         SprinterPercentage = 0,
         -- The damage zombies inflict per attack. Default = Normal
@@ -805,15 +797,13 @@ SandboxVars = {
         -- 2 = Normal
         -- 3 = Weak
         -- 4 = Random
-        -- Rising preset: weaker zombies
-        Strength = 3,
+        Strength = 2,
         -- The difficulty of killing a zombie. Default = Random
         -- 1 = Tough
         -- 2 = Normal
         -- 3 = Fragile
         -- 4 = Random
-        -- Rising preset: less durable zombies
-        Toughness = 3,
+        Toughness = 2,
         -- How the Knox Virus spreads. Default = Blood and Saliva
         -- 1 = Blood and Saliva
         -- 2 = Saliva Only
@@ -888,7 +878,6 @@ SandboxVars = {
         -- 3 = Day
         ActiveOnly = 1,
         -- If zombies trigger house alarms when breaking through windows or doors.
-        -- Rising preset: no house alarms
         TriggerHouseAlarm = false,
         -- If multiple attacking zombies can drag you down and kill you.  Dependent on zombie strength.
         ZombiesDragDown = true,
@@ -922,12 +911,11 @@ SandboxVars = {
     },
     ZombieConfig = {
         -- Set by the "Zombie Count" population option, or by a custom number here. Insane = 2.5, Very High = 1.6, High = 1.2, Normal = 0.65, Low = 0.15, None = 0.0. Min: 0.00 Max: 4.00 Default: 0.65
-        -- Rising preset: heavily reduced zombie population
-        PopulationMultiplier = 0.15,
+        PopulationMultiplier = 1.0,
         -- A multiplier for the desired zombie population at the start of the game. Insane = 3.0, Very High = 2.0, High = 1.5, Normal = 1.0, Low = 0.5, None = 0.0. Min: 0.00 Max: 4.00 Default: 1.00
-        PopulationStartMultiplier = 0.5,
+        PopulationStartMultiplier = 1.0,
         -- A multiplier for the desired zombie population on the peak day. Insane = 3.0, Very High = 2.0, High = 1.5, Normal = 1.0, Low = 0.5, None = 0.0. Min: 0.00 Max: 4.00 Default: 1.50
-        PopulationPeakMultiplier = 0.75,
+        PopulationPeakMultiplier = 1.5,
         -- The day when the population reaches its peak. Min: 1 Max: 365 Default: 28
         PopulationPeakDay = 28,
         -- The number of hours that must pass before zombies may respawn in a cell. If 0, spawning is disabled. Min: 0.00 Max: 8760.00 Default: 0.00
